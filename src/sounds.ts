@@ -4,10 +4,10 @@ let isMuted: boolean = false;
 
 // Preload Character Voice Files
 const characterAudios: Record<string, HTMLAudioElement> = {
-  poli: new Audio('/sounds/poli.m4a'),
-  amber: new Audio('/sounds/amber.m4a'),
-  roy: new Audio('/sounds/roy.m4a'),
-  helly: new Audio('/sounds/helly.m4a')
+  poli: new Audio('/sounds/poli.mp3'),
+  amber: new Audio('/sounds/amber.mp3'),
+  roy: new Audio('/sounds/roy.mp3'),
+  helly: new Audio('/sounds/helly.mp3')
 };
 
 export const setMuted = (muted: boolean) => {
