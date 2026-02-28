@@ -46,10 +46,8 @@ body {
 #root {
   width: 100vw;
   height: 100dvh;
-  max-width: 600px; /* Constrain max width for tablets/desktop */
   background-color: var(--color-bg-primary);
   position: relative;
-  box-shadow: var(--shadow-lg);
   display: flex;
   flex-direction: column;
 }
