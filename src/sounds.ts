@@ -25,8 +25,10 @@ export const resumeAudio = () => {
   
   // Unlock Speech Synthesis on iOS/Mobile
   if (!speechUnlocked && window.speechSynthesis) {
-    const utterance = new SpeechSynthesisUtterance('');
-    utterance.volume = 0;
+    // iOS Safari sometimes ignores empty strings or volume 0. A silent tiny utterance works best.
+    const utterance = new SpeechSynthesisUtterance(' ');
+    utterance.volume = 0.01;
+    utterance.rate = 10;
     window.speechSynthesis.speak(utterance);
     speechUnlocked = true;
   }
@@ -90,8 +92,10 @@ export const playTadaSound = () => {
 export const playCharacterVoice = (name: string) => {
   if (isMuted || !window.speechSynthesis) return;
 
-  // Cancel any ongoing speech to prevent overlapping
-  window.speechSynthesis.cancel();
+  // Cancel any ongoing speech to prevent overlapping only if currently speaking/pending
+  if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+    window.speechSynthesis.cancel();
+  }
 
   const nameMap: Record<string, string> = {
     poli: '안녕! 난 폴리야.',
