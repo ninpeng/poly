@@ -1,4 +1,5 @@
 import confetti from 'canvas-confetti';
+import { Volume2, VolumeX } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { playPopSound, playTadaSound, resumeAudio, setMuted } from './sounds';
 
@@ -31,7 +32,11 @@ const SoundToggle = () => {
 
   return (
     <button className="sound-toggle" onClick={toggle} title="소리 켜기/끄기">
-      {muted ? '🔇' : '🔊'}
+      {muted ? (
+        <VolumeX size={24} color="var(--color-poli-blue)" />
+      ) : (
+        <Volume2 size={24} color="var(--color-poli-blue)" />
+      )}
     </button>
   );
 };
