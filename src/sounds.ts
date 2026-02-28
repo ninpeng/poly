@@ -2,6 +2,8 @@
 let audioCtx: AudioContext | null = null;
 let isMuted: boolean = false;
 let speechUnlocked: boolean = false;
+let dummyUtterance: SpeechSynthesisUtterance | null = null;
+let currentUtterance: SpeechSynthesisUtterance | null = null;
 
 export const setMuted = (muted: boolean) => {
   isMuted = muted;
@@ -26,10 +28,12 @@ export const resumeAudio = () => {
   // Unlock Speech Synthesis on iOS/Mobile
   if (!speechUnlocked && window.speechSynthesis) {
     // iOS Safari sometimes ignores empty strings or volume 0. A silent tiny utterance works best.
-    const utterance = new SpeechSynthesisUtterance(' ');
-    utterance.volume = 0.01;
-    utterance.rate = 10;
-    window.speechSynthesis.speak(utterance);
+    // MUST keep a global reference to prevent Safari's aggressive garbage collection from breaking the speech engine
+    dummyUtterance = new SpeechSynthesisUtterance('아');
+    dummyUtterance.volume = 0.01;
+    dummyUtterance.rate = 10;
+    dummyUtterance.lang = 'ko-KR';
+    window.speechSynthesis.speak(dummyUtterance);
     speechUnlocked = true;
   }
 };
@@ -104,10 +108,10 @@ export const playCharacterVoice = (name: string) => {
     helly: '안녕! 난 헬리야.'
   };
 
-  const utterance = new SpeechSynthesisUtterance(nameMap[name] || name);
-  utterance.lang = 'ko-KR';
-  utterance.rate = 1.1; // Slightly faster for energy
-  utterance.pitch = 1.2; // Slightly higher for a friendly kid-game feel
+  currentUtterance = new SpeechSynthesisUtterance(nameMap[name] || name);
+  currentUtterance.lang = 'ko-KR';
+  currentUtterance.rate = 1.1; // Slightly faster for energy
+  currentUtterance.pitch = 1.2; // Slightly higher for a friendly kid-game feel
 
-  window.speechSynthesis.speak(utterance);
+  window.speechSynthesis.speak(currentUtterance);
 };
