@@ -23,6 +23,11 @@ const SoundToggle = () => {
     setMutedState(newState);
     setMuted(newState);
     localStorage.setItem('muted', String(newState));
+    
+    // Aggressively unlock audio if unmuting mid-game
+    if (!newState) {
+      resumeAudio();
+    }
   };
 
   useEffect(() => {
@@ -188,16 +193,16 @@ function App() {
     // Audio Unlocking for Mobile
     const unlockAudio = () => {
       resumeAudio();
-      window.removeEventListener('click', unlockAudio);
-      window.removeEventListener('touchstart', unlockAudio);
     };
-    window.addEventListener('click', unlockAudio);
-    window.addEventListener('touchstart', unlockAudio);
+    window.addEventListener('click', unlockAudio, { once: true });
+    window.addEventListener('touchstart', unlockAudio, { once: true });
+    window.addEventListener('pointerdown', unlockAudio, { once: true });
 
     return () => { 
       document.head.removeChild(link);
       window.removeEventListener('click', unlockAudio);
       window.removeEventListener('touchstart', unlockAudio);
+      window.removeEventListener('pointerdown', unlockAudio);
     }
   }, []);
 

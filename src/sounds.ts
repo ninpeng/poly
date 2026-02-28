@@ -1,6 +1,7 @@
 // Simple Web Audio API Synthesizer for 30-month toddler game
 let audioCtx: AudioContext | null = null;
 let isMuted: boolean = false;
+let speechUnlocked: boolean = false;
 
 export const setMuted = (muted: boolean) => {
   isMuted = muted;
@@ -12,14 +13,22 @@ const getAudioContext = () => {
   if (!audioCtx) {
     audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
   }
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume().catch(() => {});
+  }
   return audioCtx;
 };
 
 // Explicitly resume audio context (needed for mobile browsers)
-export const resumeAudio = async () => {
-  const ctx = getAudioContext();
-  if (ctx.state === 'suspended') {
-    await ctx.resume();
+export const resumeAudio = () => {
+  getAudioContext();
+  
+  // Unlock Speech Synthesis on iOS/Mobile
+  if (!speechUnlocked && window.speechSynthesis) {
+    const utterance = new SpeechSynthesisUtterance('');
+    utterance.volume = 0;
+    window.speechSynthesis.speak(utterance);
+    speechUnlocked = true;
   }
 };
 
