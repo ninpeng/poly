@@ -76,3 +76,25 @@ export const playTadaSound = () => {
     osc.stop(noteTime + 0.3);
   });
 };
+
+// Voice Synthesis (TTS) for character names
+export const playCharacterVoice = (name: string) => {
+  if (isMuted || !window.speechSynthesis) return;
+
+  // Cancel any ongoing speech to prevent overlapping
+  window.speechSynthesis.cancel();
+
+  const nameMap: Record<string, string> = {
+    poli: '폴리',
+    amber: '엠버',
+    roy: '로이',
+    helly: '헬리'
+  };
+
+  const utterance = new SpeechSynthesisUtterance(nameMap[name] || name);
+  utterance.lang = 'ko-KR';
+  utterance.rate = 1.1; // Slightly faster for energy
+  utterance.pitch = 1.2; // Slightly higher for a friendly kid-game feel
+
+  window.speechSynthesis.speak(utterance);
+};

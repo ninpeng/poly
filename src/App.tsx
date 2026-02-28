@@ -1,7 +1,7 @@
 import confetti from 'canvas-confetti';
 import { Volume2, VolumeX } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { playPopSound, playTadaSound, resumeAudio, setMuted } from './sounds';
+import { playCharacterVoice, playPopSound, playTadaSound, resumeAudio, setMuted } from './sounds';
 
 // Types
 type ScreenState = 'START' | 'PLAYING';
@@ -80,6 +80,7 @@ const PlayScreen = () => {
     // Trigger Effects
     triggerConfetti();
     playTadaSound();
+    playCharacterVoice(hiddenCharacter);
 
     // Auto-reset after a few seconds (reduced for faster pace)
     setTimeout(() => {
