@@ -1,6 +1,6 @@
 import confetti from 'canvas-confetti';
 import { useEffect, useState } from 'react';
-import { playPopSound, playTadaSound } from './sounds';
+import { playPopSound, playTadaSound, resumeAudio, setMuted } from './sounds';
 
 // Types
 type ScreenState = 'START' | 'PLAYING';
@@ -13,6 +13,29 @@ const getRandomCharacter = () => CHARACTERS[Math.floor(Math.random() * CHARACTER
 
 // --- Components ---
 
+// 0. Sound Toggle
+const SoundToggle = () => {
+  const [muted, setMutedState] = useState(localStorage.getItem('muted') === 'true');
+
+  const toggle = () => {
+    const newState = !muted;
+    setMutedState(newState);
+    setMuted(newState);
+    localStorage.setItem('muted', String(newState));
+  };
+
+  useEffect(() => {
+    // Initialize utility state
+    setMuted(muted);
+  }, []);
+
+  return (
+    <button className="sound-toggle" onClick={toggle} title="소리 켜기/끄기">
+      {muted ? '🔇' : '🔊'}
+    </button>
+  );
+};
+
 // 1. Start Screen
 const StartScreen = ({ onStart }: { onStart: () => void }) => {
   return (
@@ -20,7 +43,8 @@ const StartScreen = ({ onStart }: { onStart: () => void }) => {
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%'
     }}>
       <h1 className="title-banner">자동차<br/>까꿍 놀이!</h1>
-      <button className="btn-primary" onPointerDown={() => {
+      <button className="btn-primary" onPointerDown={async () => {
+        await resumeAudio(); // Unlock audio on first meaningful click
         playPopSound();
         onStart();
       }}>시작하기</button>
@@ -154,11 +178,26 @@ function App() {
     link.href = 'https://fonts.googleapis.com/css2?family=Jua&display=swap';
     link.rel = 'stylesheet';
     document.head.appendChild(link);
-    return () => { document.head.removeChild(link); }
+
+    // Audio Unlocking for Mobile
+    const unlockAudio = () => {
+      resumeAudio();
+      window.removeEventListener('click', unlockAudio);
+      window.removeEventListener('touchstart', unlockAudio);
+    };
+    window.addEventListener('click', unlockAudio);
+    window.addEventListener('touchstart', unlockAudio);
+
+    return () => { 
+      document.head.removeChild(link);
+      window.removeEventListener('click', unlockAudio);
+      window.removeEventListener('touchstart', unlockAudio);
+    }
   }, []);
 
   return (
     <main className="app-container">
+      <SoundToggle />
       {screen === 'START' && <StartScreen onStart={() => setScreen('PLAYING')} />}
       {screen === 'PLAYING' && <PlayScreen />}
     </main>

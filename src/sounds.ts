@@ -1,18 +1,31 @@
 // Simple Web Audio API Synthesizer for 30-month toddler game
 let audioCtx: AudioContext | null = null;
+let isMuted: boolean = false;
+
+export const setMuted = (muted: boolean) => {
+  isMuted = muted;
+};
+
+export const getIsMuted = () => isMuted;
 
 const getAudioContext = () => {
   if (!audioCtx) {
     audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
   }
-  if (audioCtx.state === 'suspended') {
-    audioCtx.resume();
-  }
   return audioCtx;
+};
+
+// Explicitly resume audio context (needed for mobile browsers)
+export const resumeAudio = async () => {
+  const ctx = getAudioContext();
+  if (ctx.state === 'suspended') {
+    await ctx.resume();
+  }
 };
 
 // Cute 'Pop' sound when touching the box
 export const playPopSound = () => {
+  if (isMuted) return;
   const ctx = getAudioContext();
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
@@ -34,6 +47,7 @@ export const playPopSound = () => {
 
 // Cheerful 'Ta-da!' sound when character appears
 export const playTadaSound = () => {
+  if (isMuted) return;
   const ctx = getAudioContext();
   
   // Play a quick arpeggio (C major chord: C, E, G, C)
