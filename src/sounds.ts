@@ -1,9 +1,14 @@
 // Simple Web Audio API Synthesizer for 30-month toddler game
 let audioCtx: AudioContext | null = null;
 let isMuted: boolean = false;
-let speechUnlocked: boolean = false;
-let dummyUtterance: SpeechSynthesisUtterance | null = null;
-let currentUtterance: SpeechSynthesisUtterance | null = null;
+
+// Preload Character Voice Files
+const characterAudios: Record<string, HTMLAudioElement> = {
+  poli: new Audio('/sounds/poli.m4a'),
+  amber: new Audio('/sounds/amber.m4a'),
+  roy: new Audio('/sounds/roy.m4a'),
+  helly: new Audio('/sounds/helly.m4a')
+};
 
 export const setMuted = (muted: boolean) => {
   isMuted = muted;
@@ -21,20 +26,19 @@ const getAudioContext = () => {
   return audioCtx;
 };
 
-// Explicitly resume audio context (needed for mobile browsers)
 export const resumeAudio = () => {
   getAudioContext();
   
-  // Unlock Speech Synthesis on iOS/Mobile
-  if (!speechUnlocked && window.speechSynthesis) {
-    // iOS Safari sometimes ignores empty strings or volume 0. A silent tiny utterance works best.
-    // MUST keep a global reference to prevent Safari's aggressive garbage collection from breaking the speech engine
-    dummyUtterance = new SpeechSynthesisUtterance('아');
-    dummyUtterance.volume = 0.01;
-    dummyUtterance.rate = 10;
-    dummyUtterance.lang = 'ko-KR';
-    window.speechSynthesis.speak(dummyUtterance);
-    speechUnlocked = true;
+  // Unlock HTML5 Audio on iOS/Mobile by playing and immediately pausing a silent file (or first available audio)
+  // We play one of the voices muted/silenced to unlock the Audio element restriction
+  const testAudio = characterAudios['poli'];
+  if (testAudio) {
+    testAudio.play().then(() => {
+      testAudio.pause();
+      testAudio.currentTime = 0;
+    }).catch(() => {
+      // Ignore initial play errors
+    });
   }
 };
 
@@ -92,26 +96,19 @@ export const playTadaSound = () => {
   });
 };
 
-// Voice Synthesis (TTS) for character names
+// Play Voice Audio files
 export const playCharacterVoice = (name: string) => {
-  if (isMuted || !window.speechSynthesis) return;
+  if (isMuted) return;
 
-  // Cancel any ongoing speech to prevent overlapping only if currently speaking/pending
-  if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
-    window.speechSynthesis.cancel();
+  const audio = characterAudios[name];
+  if (audio) {
+    // Stop currently playing voice if any
+    audio.pause();
+    audio.currentTime = 0;
+    
+    // Play new voice
+    audio.play().catch(e => {
+      console.error(`Failed to play ${name} voice:`, e);
+    });
   }
-
-  const nameMap: Record<string, string> = {
-    poli: '안녕! 난 폴리야.',
-    amber: '안녕! 난 엠버야.',
-    roy: '안녕! 난 로이야.',
-    helly: '안녕! 난 헬리야.'
-  };
-
-  currentUtterance = new SpeechSynthesisUtterance(nameMap[name] || name);
-  currentUtterance.lang = 'ko-KR';
-  currentUtterance.rate = 1.1; // Slightly faster for energy
-  currentUtterance.pitch = 1.2; // Slightly higher for a friendly kid-game feel
-
-  window.speechSynthesis.speak(currentUtterance);
 };
