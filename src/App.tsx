@@ -48,8 +48,8 @@ const StartScreen = ({ onStart }: { onStart: () => void }) => {
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%'
     }}>
       <h1 className="title-banner">자동차<br/>까꿍 놀이!</h1>
-      <button className="btn-primary" onPointerDown={async () => {
-        await resumeAudio(); // Unlock audio on first meaningful click
+      <button className="btn-primary" onPointerDown={() => {
+        resumeAudio(); // Non-blocking audio unlock
         playPopSound();
         onStart();
       }}>시작하기</button>
