@@ -85,10 +85,10 @@ export const playCharacterVoice = (name: string) => {
   window.speechSynthesis.cancel();
 
   const nameMap: Record<string, string> = {
-    poli: '폴리',
-    amber: '엠버',
-    roy: '로이',
-    helly: '헬리'
+    poli: '안녕! 난 폴리야.',
+    amber: '안녕! 난 엠버야.',
+    roy: '안녕! 난 로이야.',
+    helly: '안녕! 난 헬리야.'
   };
 
   const utterance = new SpeechSynthesisUtterance(nameMap[name] || name);
