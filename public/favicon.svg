@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <!-- Simple gradient for the box -->
+    <linearGradient id="boxGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#8d6e63" />
+      <stop offset="100%" stop-color="#5d4037" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background Bubble -->
+  <circle cx="50" cy="50" r="48" fill="#e0f7fa" stroke="#2196f3" stroke-width="4"/>
+
+  <!-- Character (Cute Blue Car peaking out) -->
+  <!-- Car Body -->
+  <path d="M25 50 Q 25 30, 50 30 Q 75 30, 75 50 L 75 60 L 25 60 Z" fill="#2196f3" />
+  <!-- Windshield -->
+  <path d="M35 50 Q 35 40, 50 40 Q 65 40, 65 50 Z" fill="#b3e5fc" />
+  <!-- Eyes -->
+  <circle cx="43" cy="45" r="3" fill="#37474f" />
+  <circle cx="57" cy="45" r="3" fill="#37474f" />
+  <!-- Siren -->
+  <rect x="45" y="24" width="10" height="6" rx="2" fill="#f44336" />
+  
+  <!-- Box (Covering the bottom half) -->
+  <rect x="20" y="55" width="60" height="35" rx="5" fill="url(#boxGrad)" stroke="#3e2723" stroke-width="3"/>
+  <rect x="15" y="55" width="70" height="10" rx="3" fill="#795548" stroke="#3e2723" stroke-width="2"/>
+  <rect x="45" y="65" width="10" height="15" fill="#5d4037" />
+  <rect x="45" y="65" width="10" height="2" fill="#3e2723" />
+  
+  <!-- Star accents -->
+  <path d="M15 25 L 17 30 L 22 30 L 18 33 L 19 38 L 15 35 L 11 38 L 12 33 L 8 30 L 13 30 Z" fill="#ffeb3b" />
+  <path d="M85 45 L 87 50 L 92 50 L 88 53 L 89 58 L 85 55 L 81 58 L 82 53 L 78 50 L 83 50 Z" fill="#ffeb3b" />
+</svg>
